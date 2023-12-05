@@ -1,15 +1,13 @@
 {
-  "npmScope": "nx-aws",
+  "npmScope": "nx-artifactory",
   "affected": {
     "defaultBase": "master"
   },
   "tasksRunnerOptions": {
     "default": {
-      "runner": "nx-cloud",
+      "runner": "nx/tasks-runners/default",
       "options": {
         "cacheableOperations": ["build", "test", "lint", "e2e"],
-        "parallel": 1,
-        "accessToken": "NGIxYzhjYjMtYTBjNC00MDk3LTg0NGMtZDZhNDliZTc3MTMzfHJlYWQtd3JpdGU="
       }
     }
   },
@@ -41,5 +39,5 @@
       "!{projectRoot}/jest.config.[jt]s"
     ]
   },
-  "defaultProject": "nx-aws-cache"
+  "defaultProject": "nx-artifactory-cache"
 }
