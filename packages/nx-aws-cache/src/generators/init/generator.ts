@@ -1,4 +1,5 @@
-import { formatFiles, logger, Tree, updateJson, readRootPackageJson } from '@nx/devkit';
+import { formatFiles, logger, Tree, updateJson } from '@nx/devkit';
+import { readRootPackageJson } from '@nx/webpack';
 
 import { InitGeneratorSchema } from './schema';
 
