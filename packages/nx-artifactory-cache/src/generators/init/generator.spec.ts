@@ -13,6 +13,16 @@ describe('init generator', () => {
 
   beforeEach(() => {
     appTree = createTreeWithEmptyWorkspace();
+    // add task runner to nx.json taskrunner
+
+    const nxJson = readJson(appTree, 'nx.json');
+    nxJson.tasksRunnerOptions = {
+      default: {
+        runner: 'nx/tasks-runners/default',
+        options: {},
+      },
+    };
+    appTree.write('nx.json', JSON.stringify(nxJson));
   });
 
   it('should add @nx-aws-plugin/nx-aws-cache to nx.json', () => {
@@ -30,11 +40,14 @@ describe('init generator', () => {
 
   it('should add @nx-aws-plugin/nx-aws-cache with no aws options to nx.json', () => {
     let nxJson = readJson(appTree, 'nx.json');
+    console.log(nxJson);
     expect(nxJson.tasksRunnerOptions.default.runner).toBe('nx/tasks-runners/default');
 
     generator(appTree, {});
 
     nxJson = readJson(appTree, 'nx.json');
+
+    console.log('test 2', nxJson);
 
     expect(nxJson.tasksRunnerOptions.default.runner).toBe('@nx-aws-plugin/nx-aws-cache');
     expect(nxJson.tasksRunnerOptions.default.options.awsRegion).toBeUndefined();

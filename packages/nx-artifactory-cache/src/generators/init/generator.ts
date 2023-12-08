@@ -3,6 +3,22 @@ import { readRootPackageJson } from '@nx/webpack';
 
 import { InitGeneratorSchema } from './schema';
 
+/**
+ * Checks if the installed version of Nx is compatible.
+ *
+ * This function reads the root package.json file and checks if either '@nx/workspace' or '@nrwl/workspace'
+ * is listed in the dependencies or devDependencies. If neither is found, an error is thrown.
+ *
+ * If a compatible package is found, the function checks the version number. If the version number starts
+ * with '^' or '~', these characters are removed.
+ *
+ * The function then parses the major version number. If it cannot be parsed, the function returns false.
+ *
+ * If the major version number is 16 or greater, the function returns true, indicating that the version is compatible.
+ *
+ * @returns {boolean} - Returns true if the installed Nx version is compatible, false otherwise.
+ * @throws {Error} - Throws an error if neither '@nx/workspace' nor '@nrwl/workspace' is found in the package.json file.
+ */
 function isCompatibleVersion() {
   const packageJson = readRootPackageJson();
   let version =
@@ -34,6 +50,16 @@ function isCompatibleVersion() {
   return false;
 }
 
+/**
+ * Updates the nx.json file.
+ *
+ * This function adds the '@nx-aws-plugin/nx-aws-cache' task runner to the nx.json file.
+ *
+ * If the user has provided any AWS options, they are added to the task runner configuration.
+ *
+ * @param {Tree} tree - The Nx Tree object.
+ * @param {InitGeneratorSchema} options - The options provided to the init generator.
+ */
 function updateNxJson(tree: Tree, options: InitGeneratorSchema): void {
   updateJson(tree, 'nx.json', (jsonContent) => {
     const currentOptions = jsonContent.tasksRunnerOptions?.default?.options;
@@ -58,6 +84,16 @@ function updateNxJson(tree: Tree, options: InitGeneratorSchema): void {
   });
 }
 
+/**
+ * The init generator.
+ *
+ * This generator is used to add the '@nx-aws-plugin/nx-aws-cache' task runner to the nx.json file.
+ *
+ * If the user has provided any AWS options, they are added to the task runner configuration.
+ *
+ * @param {Tree} tree - The Nx Tree object.
+ * @param {InitGeneratorSchema} options - The options provided to the init generator.
+ */
 // eslint-disable-next-line func-names
 export default async function (tree: Tree, options: InitGeneratorSchema) {
   if (!isCompatibleVersion()) {

@@ -1,64 +1,46 @@
-import { createReadStream, createWriteStream, writeFile } from 'fs';
+import { writeFile } from 'fs';
 import { join, dirname } from 'path';
-import { pipeline, Readable } from 'stream';
 import { promisify } from 'util';
 
-import * as clientS3 from '@aws-sdk/client-s3';
-import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
-import { CredentialsProviderError } from '@aws-sdk/property-provider';
 import { RemoteCache } from '@nx/workspace/src/tasks-runner/default-tasks-runner';
 import { create, extract } from 'tar';
 
-import { AwsNxCacheOptions } from './models/aws-nx-cache-options.model';
+import { ArtifactoryNxCacheOptions } from './models/artifactory-nx-cache-options.model';
 import { Logger } from './logger';
 import { MessageReporter } from './message-reporter';
 
-export class AwsCache implements RemoteCache {
-  private readonly bucket: string;
-  private readonly path: string;
-  private readonly s3: clientS3.S3Client;
+import { ArtifactoryAPI } from './artifactory-api';
+export class ArtifactoryCache implements RemoteCache {
   private readonly logger = new Logger();
   private readonly uploadQueue: Array<Promise<boolean>> = [];
+  private readonly api: ArtifactoryAPI;
+  private readonly url: string;
+  private readonly repoKey: string;
+  private readonly basicHttpAuth: string;
 
-  public constructor(options: AwsNxCacheOptions, private messages: MessageReporter) {
-    const awsBucket = options.awsBucket ?? '';
-    const bucketTokens = awsBucket.split('/');
-    this.bucket = bucketTokens.shift() as string;
-    this.path = bucketTokens.join('/');
+  public constructor(options: ArtifactoryNxCacheOptions, private messages: MessageReporter) {
+    this.url = options.url;
+    this.repoKey = options.repoKey;
 
-    const clientConfig: clientS3.S3ClientConfig = {};
-
-    if (options.awsRegion) {
-      clientConfig.region = options.awsRegion;
-    }
-
-    if (options.awsEndpoint) {
-      clientConfig.endpoint = options.awsEndpoint;
-    }
-
-    if (options.awsAccessKeyId && options.awsSecretAccessKey) {
-      clientConfig.credentials = {
-        accessKeyId: options.awsAccessKeyId,
-        secretAccessKey: options.awsSecretAccessKey,
-      };
+    if (options.basicHttpAuth) {
+      this.basicHttpAuth = options.basicHttpAuth;
     } else {
-      clientConfig.credentials = fromNodeProviderChain(
-        options.awsProfile ? { profile: options.awsProfile } : {},
-      );
+      // Get the env var ARTIFACTORY_ACCESS_TOKEN
+      this.basicHttpAuth = process.env.ARTIFACTORY_ACCESS_TOKEN || '';
     }
 
-    if (options.awsForcePathStyle) {
-      clientConfig.forcePathStyle = true;
-    }
-
-    this.s3 = new clientS3.S3Client(clientConfig);
+    this.api = new ArtifactoryAPI(this.url, this.basicHttpAuth);
   }
 
-  public checkConfig(options: AwsNxCacheOptions): void {
+  public checkConfig(options: ArtifactoryNxCacheOptions): void {
     const missingOptions: Array<string> = [];
 
-    if (!options.awsBucket) {
-      missingOptions.push('NXCACHE_AWS_BUCKET | awsBucket');
+    if (!options.url) {
+      missingOptions.push('NXCACHE_ARTIFACTORY_URL | url');
+    }
+
+    if (!options.repoKey) {
+      missingOptions.push('NXCACHE_ARTIFACTORY_REPO_KEY | repoKey');
     }
 
     if (missingOptions.length > 0) {
@@ -66,20 +48,7 @@ export class AwsCache implements RemoteCache {
     }
   }
 
-  // eslint-disable-next-line max-statements
   public async retrieve(hash: string, cacheDirectory: string): Promise<boolean> {
-    try {
-      await this.s3.config.credentials();
-    } catch (err) {
-      this.messages.error = err as Error;
-
-      return false;
-    }
-
-    if (this.messages.error) {
-      return false;
-    }
-
     try {
       this.logger.debug(`Storage Cache: Downloading ${hash}`);
 
@@ -172,16 +141,10 @@ export class AwsCache implements RemoteCache {
 
   private async uploadFile(hash: string, tgzFilePath: string): Promise<void> {
     const tgzFileName = this.getTgzFileName(hash);
-    const params: clientS3.PutObjectCommand = new clientS3.PutObjectCommand({
-      Bucket: this.bucket,
-      Key: this.getS3Key(tgzFileName),
-      Body: createReadStream(tgzFilePath),
-    });
-
     try {
       this.logger.debug(`Storage Cache: Uploading ${hash}`);
 
-      await this.s3.send(params);
+      await this.api.uploadFile(tgzFilePath, `${this.repoKey}/${tgzFileName}`);
 
       this.logger.debug(`Storage Cache: Stored ${hash}`);
     } catch (err) {
@@ -189,48 +152,25 @@ export class AwsCache implements RemoteCache {
     }
   }
 
-  private getS3Key(tgzFileName: string) {
-    return join(this.path, tgzFileName);
-  }
-
   private async downloadFile(hash: string, tgzFilePath: string): Promise<void> {
-    const pipelinePromise = promisify(pipeline),
-      tgzFileName = this.getTgzFileName(hash),
-      writeFileToLocalDir = createWriteStream(tgzFilePath),
-      params = new clientS3.GetObjectCommand({
-        Bucket: this.bucket,
-        Key: this.getS3Key(tgzFileName),
-      });
-
     try {
-      const commandOutput = await this.s3.send(params);
-      const fileStream = commandOutput.Body as Readable;
+      this.logger.debug(`Storage Cache: Downloading ${hash}`);
 
-      await pipelinePromise(fileStream, writeFileToLocalDir);
+      await this.api.downloadFile('repoKey', tgzFilePath);
+
+      this.logger.debug(`Storage Cache: Downloaded ${hash}`);
     } catch (err) {
       throw new Error(`Storage Cache: Download error - ${err}`);
     }
   }
 
   private async checkIfCacheExists(hash: string): Promise<boolean> {
-    const tgzFileName = this.getTgzFileName(hash),
-      params: clientS3.HeadObjectCommand = new clientS3.HeadObjectCommand({
-        Bucket: this.bucket,
-        Key: this.getS3Key(tgzFileName),
-      });
-
     try {
-      await this.s3.send(params);
+      const tgzFileName = this.getTgzFileName(hash);
 
-      return true;
+      return await this.api.fileExists(`${this.repoKey}/${tgzFileName}`);
     } catch (err) {
-      if ((err as Error).name === 'NotFound') {
-        return false;
-      } else if (err instanceof CredentialsProviderError) {
-        return false;
-      }
-
-      throw new Error(`Error checking cache file existence - ${err}`);
+      throw new Error(`Storage Cache: Check cache error - ${err}`);
     }
   }
 

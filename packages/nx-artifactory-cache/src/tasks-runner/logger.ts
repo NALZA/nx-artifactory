@@ -10,7 +10,7 @@ export class Logger {
     output.addNewline();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (output as any).writeOutputTitle({
-      label: chalk.reset.inverse.bold.keyword('grey')(' AWS-CLOUD '),
+      label: chalk.reset.inverse.bold.keyword('grey')(' ARTIFACTORY-CLOUD '),
       title: chalk.keyword('grey')(message),
     });
     output.addNewline();
@@ -20,7 +20,7 @@ export class Logger {
     output.addNewline();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (output as any).writeOutputTitle({
-      label: chalk.reset.inverse.bold.red(' AWS-CLOUD '),
+      label: chalk.reset.inverse.bold.red(' ARTIFACTORY-CLOUD '),
       title: chalk.bold.red(message),
     });
     output.addNewline();
@@ -30,7 +30,7 @@ export class Logger {
     output.addNewline();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (output as any).writeOutputTitle({
-      label: chalk.reset.inverse.bold.yellow(' AWS-CLOUD '),
+      label: chalk.reset.inverse.bold.yellow(' ARTIFACTORY-CLOUD '),
       title: chalk.bold.yellow(message),
     });
     output.addNewline();
@@ -40,7 +40,7 @@ export class Logger {
     output.addNewline();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (output as any).writeOutputTitle({
-      label: chalk.reset.inverse.bold.green(' AWS-CLOUD '),
+      label: chalk.reset.inverse.bold.green(' ARTIFACTORY-CLOUD '),
       title: chalk.bold.green(message),
     });
     output.addNewline();
@@ -50,7 +50,7 @@ export class Logger {
     output.addNewline();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (output as any).writeOutputTitle({
-      label: chalk.reset.inverse.bold.keyword('orange')(' AWS-CLOUD '),
+      label: chalk.reset.inverse.bold.keyword('orange')(' ARTIFACTORY-CLOUD '),
       title: chalk.keyword('orange')(message),
     });
     output.addNewline();
