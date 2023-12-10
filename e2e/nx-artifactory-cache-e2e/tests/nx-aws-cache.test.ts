@@ -5,10 +5,10 @@ import {
   readJson,
   runCommandAsync,
   tmpProjPath,
-} from '@nx/plugin/testing';
+} from '@nrwl/nx-plugin/testing';
 import { execSync } from 'child_process';
 import { dirname } from 'node:path';
-import { getPackageManagerCommand } from '@nx/devkit';
+import { getPackageManagerCommand } from '@nrwl/devkit';
 
 function runNxNewCommand() {
   const localTmpDir = dirname(tmpProjPath());

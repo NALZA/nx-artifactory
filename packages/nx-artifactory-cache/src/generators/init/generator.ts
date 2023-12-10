@@ -1,5 +1,4 @@
-import { formatFiles, logger, Tree, updateJson } from '@nx/devkit';
-import { readRootPackageJson } from '@nx/webpack';
+import { formatFiles, logger, Tree, updateJson, readRootPackageJson } from '@nrwl/devkit';
 
 import { InitGeneratorSchema } from './schema';
 
@@ -43,7 +42,7 @@ function isCompatibleVersion() {
   }
 
   // eslint-disable-next-line no-magic-numbers
-  if (majorNumber >= 16) {
+  if (majorNumber <= 15) {
     return true;
   }
 
@@ -94,7 +93,7 @@ function updateNxJson(tree: Tree, options: InitGeneratorSchema): void {
 // eslint-disable-next-line func-names
 export default async function (tree: Tree, options: InitGeneratorSchema) {
   if (!isCompatibleVersion()) {
-    logger.warn('You must install Nx version 16 or later to enable the plugin.');
+    logger.warn('This plugin requires Nx version 15 or lower. ');
   }
 
   updateNxJson(tree, options);

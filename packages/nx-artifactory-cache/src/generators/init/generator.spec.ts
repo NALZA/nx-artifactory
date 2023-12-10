@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
-import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
-import { Tree, readJson } from '@nx/devkit';
+import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
+import { Tree, readJson } from '@nrwl/devkit';
 
 import generator from './generator';
 import { InitGeneratorSchema } from './schema';
@@ -56,5 +56,24 @@ describe('init generator', () => {
     expect(nxJson.tasksRunnerOptions.default.options.url).toBeUndefined();
     expect(nxJson.tasksRunnerOptions.default.options.authToken).toBeUndefined();
     expect(nxJson.tasksRunnerOptions.default.options.repoKey).toBeUndefined();
+  });
+
+  it('should keep any cachable operations in nx.json', () => {
+    let nxJson = readJson(appTree, 'nx.json');
+
+    nxJson.tasksRunnerOptions.default.options = {
+      cacheableOperations: ['build', 'test'],
+    };
+
+    appTree.write('nx.json', JSON.stringify(nxJson));
+
+    generator(appTree, options);
+
+    nxJson = readJson(appTree, 'nx.json');
+
+    expect(nxJson.tasksRunnerOptions.default.options.cacheableOperations).toEqual([
+      'build',
+      'test',
+    ]);
   });
 });

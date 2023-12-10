@@ -23,8 +23,8 @@
   },
   "homepage": "https://github.com/NALZA/nx-artifactory",
   "peerDependencies": {
-    "nx": ">=16.0.0",
-    "@nx/devkit": ">=16.0.0",
-    "@nx/workspace": ">=16.0.0"
+    "@nrwl/workspace": ">=14.0.0",
+    "@nrwl/devkit": ">=14.0.0",
+    "nx": ">=14.0.0"
   }
 }

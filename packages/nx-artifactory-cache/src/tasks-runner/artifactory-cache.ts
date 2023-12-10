@@ -2,7 +2,7 @@ import { writeFile } from 'fs';
 import { join, dirname } from 'path';
 import { promisify } from 'util';
 
-import { RemoteCache } from '@nx/workspace/src/tasks-runner/default-tasks-runner';
+import { RemoteCache } from '@nrwl/workspace/src/tasks-runner/default-tasks-runner';
 import { create, extract } from 'tar';
 
 import { ArtifactoryNxCacheOptions } from './models/artifactory-nx-cache-options.model';

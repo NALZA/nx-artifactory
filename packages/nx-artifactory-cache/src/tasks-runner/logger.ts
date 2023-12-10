@@ -1,4 +1,4 @@
-import { output } from '@nx/devkit';
+import { output } from '@nrwl/devkit';
 import * as chalk from 'chalk';
 
 export class Logger {

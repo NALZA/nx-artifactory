@@ -6,8 +6,8 @@ import { config as dotEnvConfig } from 'dotenv';
   });
 });
 
-import { TaskStatus } from '@nx/workspace/src/tasks-runner/tasks-runner';
-import { defaultTasksRunner } from '@nx/devkit';
+import { TaskStatus } from '@nrwl/workspace/src/tasks-runner/tasks-runner';
+import { defaultTasksRunner } from '@nrwl/devkit';
 
 import { Logger } from './logger';
 import { MessageReporter } from './message-reporter';
