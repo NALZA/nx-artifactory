@@ -66,16 +66,12 @@ function updateNxJson(tree: Tree, options: InitGeneratorSchema): void {
 
     jsonContent.tasksRunnerOptions = {
       default: {
-        runner: '@nx-aws-plugin/nx-aws-cache',
+        runner: '@nx-aws-plugin/artifactory-cache',
         options: {
           ...currentOptions,
-          ...(options.awsAccessKeyId ? { awsAccessKeyId: options.awsAccessKeyId } : {}),
-          ...(options.awsSecretAccessKey ? { awsSecretAccessKey: options.awsSecretAccessKey } : {}),
-          ...(options.awsProfile ? { awsProfile: options.awsProfile } : {}),
-          ...(options.awsEndpoint ? { awsEndpoint: options.awsEndpoint } : {}),
-          ...(options.awsRegion ? { awsRegion: options.awsRegion } : {}),
-          ...(options.awsBucket ? { awsBucket: options.awsBucket } : {}),
-          ...(options.awsForcePathStyle ? { awsForcePathStyle: options.awsForcePathStyle } : {}),
+          ...(options.url ? { url: options.url } : {}),
+          ...(options.basicHttpAuth ? { basicHttpAuth: options.basicHttpAuth } : {}),
+          ...(options.repoKey ? { repoKey: options.repoKey } : {}),
         },
       },
     };
