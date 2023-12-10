@@ -71,7 +71,7 @@ export class ArtifactoryAPI {
    * await api.downloadFile('my-repo/my-artifact.tar.gz', './local/path/my-artifact.tar.gz');
    */
   async downloadFile(artifactPath: string, localPath: string): Promise<void> {
-    const url = `${this.baseUrl}/${artifactPath}`;
+    const url = `${this.baseUrl}/${artifactPath}?[skipUpdateStats=true]`;
 
     const response = await axios
       .get(url, { ...this.getRequestConfig(), responseType: 'stream' })

@@ -157,10 +157,11 @@ export class ArtifactoryCache implements RemoteCache {
   }
 
   private async downloadFile(hash: string, tgzFilePath: string): Promise<void> {
+    const artifactPath = `${this.repoKey}/${this.getTgzFileName(hash)}`;
     try {
       this.logger.debug(`Storage Cache: Downloading ${hash}`);
 
-      await this.api.downloadFile(this.repoKey, tgzFilePath);
+      await this.api.downloadFile(artifactPath, tgzFilePath);
 
       this.logger.debug(`Storage Cache: Downloaded ${hash}`);
     } catch (err) {
