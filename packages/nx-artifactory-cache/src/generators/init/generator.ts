@@ -72,7 +72,6 @@ function updateNxJson(tree: Tree, options: InitGeneratorSchema): void {
           ...(options.url ? { url: options.url } : {}),
           ...(options.authToken ? { authToken: options.authToken } : {}),
           ...(options.repoKey ? { repoKey: options.repoKey } : {}),
-          ...(options.cachePath ? { cachePath: options.cachePath } : {}),
         },
       },
     };

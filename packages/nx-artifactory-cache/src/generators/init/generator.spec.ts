@@ -40,7 +40,6 @@ describe('init generator', () => {
     );
     expect(nxJson.tasksRunnerOptions.default.options.authToken).toBe('111aaa3333');
     expect(nxJson.tasksRunnerOptions.default.options.repoKey).toBe('nx');
-    expect(nxJson.tasksRunnerOptions.default.options.cachePath).toBeUndefined();
   });
 
   it('should add @nx-aws-plugin/nx-aws-cache with no aws options to nx.json', () => {
