@@ -17,20 +17,23 @@ export class ArtifactoryCache implements RemoteCache {
   private readonly api: ArtifactoryAPI;
   private readonly url: string;
   private readonly repoKey: string;
-  private readonly basicHttpAuth: string;
+  private readonly authToken: string;
+  private readonly cachePath?: string;
 
   public constructor(options: ArtifactoryNxCacheOptions, private messages: MessageReporter) {
     this.url = options.url;
     this.repoKey = options.repoKey;
 
-    if (options.basicHttpAuth) {
-      this.basicHttpAuth = options.basicHttpAuth;
+    if (options.authToken) {
+      this.authToken = options.authToken;
     } else {
       // Get the env var ARTIFACTORY_ACCESS_TOKEN
-      this.basicHttpAuth = process.env.ARTIFACTORY_ACCESS_TOKEN || '';
+      this.authToken = process.env.ARTIFACTORY_ACCESS_TOKEN || '';
     }
 
-    this.api = new ArtifactoryAPI(this.url, this.basicHttpAuth);
+    this.cachePath = options.cachePath;
+
+    this.api = new ArtifactoryAPI(this.url, this.authToken);
   }
 
   public checkConfig(options: ArtifactoryNxCacheOptions): void {
@@ -190,7 +193,7 @@ export class ArtifactoryCache implements RemoteCache {
   }
 
   private getTgzFilePath(hash: string, cacheDirectory: string): string {
-    return join(cacheDirectory, this.getTgzFileName(hash));
+    return join(cacheDirectory, this.cachePath ?? '', this.getTgzFileName(hash));
   }
 
   private getCommitFileName(hash: string): string {

@@ -19,7 +19,8 @@ function getOptions(options: ArtifactoryNxCacheOptions) {
   return {
     url: process.env.NXCACHE_ARTIFACTORY_URL ?? options.url,
     repoKey: process.env.NXCACHE_ARTIFACTORY_REPO_KEY ?? options.repoKey,
-    basicHttpAuth: process.env.NXCACHE_ARTIFACTORY_BASIC_HTTP_AUTH ?? options.basicHttpAuth,
+    authToken: process.env.NXCACHE_ARTIFACTORY_BASIC_HTTP_AUTH ?? options.authToken,
+    cachePath: process.env.NXCACHE_ARTIFACTORY_CACHE_PATH ?? options.cachePath,
     skipNxCache: process.env.NXCACHE_SKIP_NX_CACHE
       ? process.env.NXCACHE_SKIP_NX_CACHE === 'true'
       : options.skipNxCache,

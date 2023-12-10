@@ -1,6 +1,7 @@
 export interface ArtifactoryNxCacheOptions {
   url: string;
-  basicHttpAuth: string;
+  authToken: string;
   repoKey: string;
+  cachePath?: string;
   skipNxCache?: boolean;
 }

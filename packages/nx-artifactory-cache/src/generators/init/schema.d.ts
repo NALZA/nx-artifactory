@@ -1,5 +1,6 @@
 export interface InitGeneratorSchema {
   url?: string;
-  basicHttpAuth?: string;
+  authToken?: string;
   repoKey?: string;
+  cachePath?: string;
 }

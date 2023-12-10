@@ -46,7 +46,7 @@ describe('aws-cache e2e', () => {
 
   it('should init nx-aws-cache', async () => {
     await runCommandAsync(
-      `npx nx generate nx-artifactory:init --url=https://www.test/artifactory.com --basicHttpAuth=1234567890 --repoKey=repoKey`,
+      `npx nx generate nx-artifactory:init --url=https://www.test/artifactory.com --authToken=1234567890 --repoKey=repoKey`,
     );
 
     const nxJson = readJson('nx.json');

@@ -9,7 +9,7 @@
       "description": "Artifactory base URL",
       "x-prompt": "Artifactory base URL"
     },
-    "basicHttpAuth": {
+    "authToken": {
       "type": "string",
       "description": "API Key Auth credentials for Artifactory",
       "x-prompt": "API Key Auth credentials for Artifactory"
@@ -18,6 +18,11 @@
       "type": "string",
       "description": "Artifactory repository key",
       "x-prompt": "Artifactory repository key"
+    },
+    "cachePath": {
+      "type": "string",
+      "description": "Path to cache directory",
+      "x-prompt": "Path to cache directory"
     }
   }
 }
