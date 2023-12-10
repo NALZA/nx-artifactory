@@ -9,39 +9,37 @@ import { config as dotEnvConfig } from 'dotenv';
 import { TaskStatus } from '@nx/workspace/src/tasks-runner/tasks-runner';
 import { defaultTasksRunner } from '@nx/devkit';
 
-import { AwsNxCacheOptions } from './models/aws-nx-cache-options.model';
-import { AwsCache } from './aws-cache';
 import { Logger } from './logger';
 import { MessageReporter } from './message-reporter';
 
-function getOptions(options: AwsNxCacheOptions) {
+import { ArtifactoryCache } from './artifactory-cache';
+import { ArtifactoryNxCacheOptions } from './models/artifactory-nx-cache-options.model';
+
+function getOptions(options: ArtifactoryNxCacheOptions) {
   return {
-    awsAccessKeyId: process.env.NXCACHE_AWS_ACCESS_KEY_ID ?? options.awsAccessKeyId,
-    awsSecretAccessKey: process.env.NXCACHE_AWS_SECRET_ACCESS_KEY ?? options.awsSecretAccessKey,
-    awsProfile: process.env.NXCACHE_AWS_PROFILE ?? options.awsProfile,
-    awsEndpoint: process.env.NXCACHE_AWS_ENDPOINT ?? options.awsEndpoint,
-    awsRegion: process.env.NXCACHE_AWS_REGION ?? options.awsRegion,
-    awsBucket: process.env.NXCACHE_AWS_BUCKET ?? options.awsBucket,
-    awsForcePathStyle: process.env.NXCACHE_AWS_FORCE_PATH_STYLE
-      ? process.env.NXCACHE_AWS_FORCE_PATH_STYLE === 'true'
-      : options.awsForcePathStyle,
+    url: process.env.NXCACHE_ARTIFACTORY_URL ?? options.url,
+    repoKey: process.env.NXCACHE_ARTIFACTORY_REPO_KEY ?? options.repoKey,
+    basicHttpAuth: process.env.NXCACHE_ARTIFACTORY_BASIC_HTTP_AUTH ?? options.basicHttpAuth,
+    skipNxCache: process.env.NXCACHE_SKIP_NX_CACHE
+      ? process.env.NXCACHE_SKIP_NX_CACHE === 'true'
+      : options.skipNxCache,
   };
 }
 
 // eslint-disable-next-line max-lines-per-function
 export const tasksRunner = (
   tasks: Parameters<typeof defaultTasksRunner>[0],
-  options: Parameters<typeof defaultTasksRunner>[1] & AwsNxCacheOptions,
+  options: Parameters<typeof defaultTasksRunner>[1] & ArtifactoryNxCacheOptions,
   // eslint-disable-next-line no-magic-numbers
   context: Parameters<typeof defaultTasksRunner>[2],
 ) => {
-  const awsOptions: AwsNxCacheOptions = getOptions(options);
+  const artifactoryOptions: ArtifactoryNxCacheOptions = getOptions(options);
   const logger = new Logger();
 
   try {
-    if (process.env.NXCACHE_AWS_DISABLE === 'true') {
+    if (process.env.NXCACHE_ARTIFACTORY_DISABLE === 'true') {
       if (!options.skipNxCache) {
-        logger.note('USING LOCAL CACHE (NXCACHE_AWS_DISABLE is set to true)');
+        logger.note('USING LOCAL CACHE (NXCACHE_ARTIFACTORY_DISABLE is set to true)');
       }
 
       return defaultTasksRunner(tasks, options, context);
@@ -52,7 +50,7 @@ export const tasksRunner = (
     }
 
     const messages = new MessageReporter(logger);
-    const remoteCache = new AwsCache(awsOptions, messages);
+    const remoteCache = new ArtifactoryCache(artifactoryOptions, messages);
 
     const runner: Promise<{ [id: string]: TaskStatus }> = defaultTasksRunner(
       tasks,

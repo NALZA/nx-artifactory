@@ -10,6 +10,7 @@ import { Logger } from './logger';
 import { MessageReporter } from './message-reporter';
 
 import { ArtifactoryAPI } from './artifactory-api';
+
 export class ArtifactoryCache implements RemoteCache {
   private readonly logger = new Logger();
   private readonly uploadQueue: Array<Promise<boolean>> = [];
@@ -44,7 +45,7 @@ export class ArtifactoryCache implements RemoteCache {
     }
 
     if (missingOptions.length > 0) {
-      throw new Error(`Missing AWS options: \n\n${missingOptions.join('\n')}`);
+      throw new Error(`Missing Artifactory options: \n\n${missingOptions.join('\n')}`);
     }
   }
 
@@ -70,7 +71,7 @@ export class ArtifactoryCache implements RemoteCache {
     } catch (err) {
       this.messages.error = err as Error;
 
-      this.logger.debug(`Storage Cache: Cache error ${hash}`);
+      this.logger.debug(`Storage Cache: Cache error ${(err as Error).message}`);
 
       return false;
     }
@@ -78,6 +79,7 @@ export class ArtifactoryCache implements RemoteCache {
 
   public store(hash: string, cacheDirectory: string): Promise<boolean> {
     if (this.messages.error) {
+      this.logger.debug(`Storage Cache: Store error ${this.messages.error}`);
       return Promise.resolve(false);
     }
 
@@ -102,7 +104,7 @@ export class ArtifactoryCache implements RemoteCache {
       return true;
     } catch (err) {
       this.messages.error = err as Error;
-
+      this.logger.debug(`Storage Cache: Store error ${(err as Error).message}`);
       return false;
     }
   }
@@ -142,7 +144,9 @@ export class ArtifactoryCache implements RemoteCache {
   private async uploadFile(hash: string, tgzFilePath: string): Promise<void> {
     const tgzFileName = this.getTgzFileName(hash);
     try {
-      this.logger.debug(`Storage Cache: Uploading ${hash}`);
+      this.logger.debug(
+        `Storage Cache: Uploading ${tgzFilePath} to ${this.repoKey}/${tgzFileName}`,
+      );
 
       await this.api.uploadFile(tgzFilePath, `${this.repoKey}/${tgzFileName}`);
 
@@ -156,7 +160,7 @@ export class ArtifactoryCache implements RemoteCache {
     try {
       this.logger.debug(`Storage Cache: Downloading ${hash}`);
 
-      await this.api.downloadFile('repoKey', tgzFilePath);
+      await this.api.downloadFile(this.repoKey, tgzFilePath);
 
       this.logger.debug(`Storage Cache: Downloaded ${hash}`);
     } catch (err) {

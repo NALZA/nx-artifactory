@@ -54,7 +54,9 @@ export class ArtifactoryAPI {
     const url = `${this.baseUrl}/${targetPath}`;
     const fileStream = createReadStream(filePath);
 
-    await axios.put(url, fileStream, this.getRequestConfig());
+    await axios.put(url, fileStream, this.getRequestConfig()).catch((error) => {
+      throw new Error(`Error uploading file - ${error}`);
+    });
   }
 
   /**
@@ -71,7 +73,11 @@ export class ArtifactoryAPI {
   async downloadFile(artifactPath: string, localPath: string): Promise<void> {
     const url = `${this.baseUrl}/${artifactPath}`;
 
-    const response = await axios.get(url, { ...this.getRequestConfig(), responseType: 'stream' });
+    const response = await axios
+      .get(url, { ...this.getRequestConfig(), responseType: 'stream' })
+      .catch((error) => {
+        throw new Error(`Error downloading file - ${error}`);
+      });
 
     const writer = createWriteStream(localPath);
     response.data.pipe(writer);

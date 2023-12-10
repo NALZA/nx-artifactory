@@ -1,10 +1,10 @@
 {
-  "name": "@nx-aws-plugin/nx-aws-cache",
+  "name": "nx-artifactory",
   "version": "3.0.0",
-  "description": "AWS S3 Cache plugin for Nx",
+  "description": "Artifactory Cache plugin for Nx",
   "keywords": [
-    "AWS",
-    "S3",
+    "jfrog",
+    "artifactory",
     "Tasks",
     "Runner",
     "Cache",
@@ -14,14 +14,14 @@
     "Monorepo"
   ],
   "license": "MIT",
-  "author": "Bojan Bratuz",
+  "author": "NALZA",
   "main": "src/index.js",
   "generators": "./generators.json",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bojanbass/nx-aws"
+    "url": "https://github.com/NALZA/nx-artifactory"
   },
-  "homepage": "https://github.com/bojanbass/nx-aws",
+  "homepage": "https://github.com/NALZA/nx-artifactory",
   "peerDependencies": {
     "nx": ">=16.0.0",
     "@nx/devkit": ">=16.0.0",
