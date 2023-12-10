@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'nx-aws-cache-e2e',
+  displayName: 'nx-artifactory-cache-e2e',
   preset: '../../jest.preset.js',
   globals: {},
   transform: {
@@ -12,5 +12,5 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/e2e/nx-aws-cache-e2e',
+  coverageDirectory: '../../coverage/e2e/nx-artifactory-cache-e2e',
 };

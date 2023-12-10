@@ -1,43 +1,23 @@
 {
   "$schema": "http://json-schema.org/schema",
   "$id": "Init",
-  "title": "Add AWS S3 Cache configuration to NX workspace",
+  "title": "Add Artifactory Cache configuration to NX workspace",
   "type": "object",
   "properties": {
-    "awsAccessKeyId": {
+    "url": {
       "type": "string",
-      "description": "AWS Access Key Id",
-      "x-prompt": "AWS Access Key Id"
+      "description": "Artifactory base URL",
+      "x-prompt": "Artifactory base URL"
     },
-    "awsSecretAccessKey": {
+    "basicHttpAuth": {
       "type": "string",
-      "description": "AWS Secret Access Key",
-      "x-prompt": "AWS Secret Access Key"
+      "description": "API Key Auth credentials for Artifactory",
+      "x-prompt": "API Key Auth credentials for Artifactory"
     },
-    "awsProfile": {
+    "repoKey": {
       "type": "string",
-      "description": "The configuration profile to use",
-      "x-prompt": "AWS configuration profile to use"
-    },
-    "awsEndpoint": {
-      "type": "string",
-      "description": "The fully qualified endpoint of the web service if a custom endpoint is needed (e.g. when using MinIO)",
-      "x-prompt": "AWS Endpoint of the web service if a custom endpoint is needed (e.g. when using MinIO)"
-    },
-    "awsRegion": {
-      "type": "string",
-      "description": "AWS region to which this client will send requests",
-      "x-prompt": "AWS region to which this client will send requests"
-    },
-    "awsBucket": {
-      "type": "string",
-      "description": "AWS S3 Bucket, where the cached Nx outputs will be stored",
-      "x-prompt": "AWS S3 Bucket, where the cached Nx outputs will be stored"
-    },
-    "awsForcePathStyle": {
-      "type": "boolean",
-      "description": "Whether to force path style URLs for S3 objects (e.g. when using MinIO)",
-      "x-prompt": "Whether to force path style URLs for S3 objects (e.g. when using MinIO)"
+      "description": "Artifactory repository key",
+      "x-prompt": "Artifactory repository key"
     }
   }
 }

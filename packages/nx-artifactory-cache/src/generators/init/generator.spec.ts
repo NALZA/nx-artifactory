@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { Tree, readJson } from '@nx/devkit';
 
@@ -7,8 +8,9 @@ import { InitGeneratorSchema } from './schema';
 describe('init generator', () => {
   let appTree: Tree;
   const options: InitGeneratorSchema = {
-    awsRegion: 'eu-central-1',
-    awsBucket: 'bucket-name',
+    url: 'https://artifactory-url.com/artifactory',
+    basicHttpAuth: '111aaa3333',
+    repoKey: 'nx',
   };
 
   beforeEach(() => {
@@ -32,9 +34,12 @@ describe('init generator', () => {
 
     nxJson = readJson(appTree, 'nx.json');
 
-    expect(nxJson.tasksRunnerOptions.default.runner).toBe('@nx-aws-plugin/nx-aws-cache');
-    expect(nxJson.tasksRunnerOptions.default.options.awsRegion).toBe('eu-central-1');
-    expect(nxJson.tasksRunnerOptions.default.options.awsBucket).toBe('bucket-name');
+    expect(nxJson.tasksRunnerOptions.default.runner).toBe('artifactory-cache');
+    expect(nxJson.tasksRunnerOptions.default.options.url).toBe(
+      'https://artifactory-url.com/artifactory',
+    );
+    expect(nxJson.tasksRunnerOptions.default.options.basicHttpAuth).toBe('111aaa3333');
+    expect(nxJson.tasksRunnerOptions.default.options.repoKey).toBe('nx');
   });
 
   it('should add @nx-aws-plugin/nx-aws-cache with no aws options to nx.json', () => {
@@ -46,8 +51,9 @@ describe('init generator', () => {
 
     nxJson = readJson(appTree, 'nx.json');
 
-    expect(nxJson.tasksRunnerOptions.default.runner).toBe('@nx-aws-plugin/nx-aws-cache');
-    expect(nxJson.tasksRunnerOptions.default.options.awsRegion).toBeUndefined();
-    expect(nxJson.tasksRunnerOptions.default.options.awsBucket).toBeUndefined();
+    expect(nxJson.tasksRunnerOptions.default.runner).toBe('artifactory-cache');
+    expect(nxJson.tasksRunnerOptions.default.options.url).toBeUndefined();
+    expect(nxJson.tasksRunnerOptions.default.options.basicHttpAuth).toBeUndefined();
+    expect(nxJson.tasksRunnerOptions.default.options.repoKey).toBeUndefined();
   });
 });

@@ -66,7 +66,7 @@ function updateNxJson(tree: Tree, options: InitGeneratorSchema): void {
 
     jsonContent.tasksRunnerOptions = {
       default: {
-        runner: '@nx-aws-plugin/artifactory-cache',
+        runner: 'artifactory-cache',
         options: {
           ...currentOptions,
           ...(options.url ? { url: options.url } : {}),

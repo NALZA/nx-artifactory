@@ -36,7 +36,7 @@ describe('aws-cache e2e', () => {
     ensureDirSync(tmpProjPath());
     cleanup();
     runNxNewCommand();
-    patchPackageJsonForPlugin('@nx-aws-plugin/nx-aws-cache', 'dist/packages/nx-aws-cache');
+    patchPackageJsonForPlugin('nx-artifactory', 'nx-artifactory');
     runPackageManagerInstall();
   });
 
@@ -46,10 +46,10 @@ describe('aws-cache e2e', () => {
 
   it('should init nx-aws-cache', async () => {
     await runCommandAsync(
-      `npx nx generate @nx-aws-plugin/nx-aws-cache:init --awsRegion=eu-central-1 --awsBucket=bucket-name/cache-folder`,
+      `npx nx generate nx-artifactory:init --url=https://www.test/artifactory.com --basicHttpAuth=1234567890 --repoKey=repoKey`,
     );
 
     const nxJson = readJson('nx.json');
-    expect(nxJson.tasksRunnerOptions.default.runner).toEqual('@nx-aws-plugin/nx-aws-cache');
+    expect(nxJson.tasksRunnerOptions.default.runner).toEqual('nx-artifactory');
   }, 120000);
 });
